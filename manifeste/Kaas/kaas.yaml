@@ -1,0 +1,92 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kaas
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-demo.kaas-mvp-ts
+  namespace: kaas
+  labels:
+    app: app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0%
+  template:
+    metadata:
+      labels:
+        app: app
+      annotations:
+        kubernetes.io/change-cause: "Mise à jour en version 3"
+    spec:
+      containers:
+      - name: app-demo
+        image: pchengesgi/web_app:v3
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 200m
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: app
+  name: app-service
+  namespace: kaas
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: app
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: app-ingress
+  namespace: kaas
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: kaas.livestreaming.local
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: app-service
+          servicePort: 80
+
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: monhpa
+  namespace: kaas
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: app-demo.kaas-mvp-ts
+  minReplicas: 4
+  maxReplicas: 25
+  targetCPUUtilizationPercentage: 30
+

@@ -1,0 +1,68 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: k8dash
+  namespace: kube-system
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      k8s-app: k8dash
+  template:
+    metadata:
+      labels:
+        k8s-app: k8dash
+    spec:
+      containers:
+      - name: k8dash
+        image: herbrandson/k8dash:latest
+        ports:
+        - containerPort: 4654
+        livenessProbe:
+          httpGet:
+            scheme: HTTP
+            path: /
+            port: 4654
+          initialDelaySeconds: 30
+          timeoutSeconds: 30
+      nodeSelector:
+        'beta.kubernetes.io/os': linux
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: k8dash
+  name: k8dash-service
+  namespace: kube-system
+spec:
+  selector:
+    k8s-app: k8dash
+      #clusterIP: 10.233.37.99
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 4654
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: k8dash-ingress
+  namespace: kube-system
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: k8dash.livestreaming.local
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: k8dash-service
+          servicePort: 80

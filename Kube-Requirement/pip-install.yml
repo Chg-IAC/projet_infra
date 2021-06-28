@@ -1,0 +1,38 @@
+---
+- name: Pip Requirement
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+
+  - name: Pip Install Ansible
+  
+    pip:
+      name: ansible
+      version: 2.9.6
+
+  - name: Pip Install Jinja2
+    pip:
+      name: jinja2
+      version: 2.11.1
+  
+  - name: Pip Install netaddr
+    pip:
+      name: netaddr
+      version: 0.7.19
+
+  - name: Pip Install pbr
+    pip:
+      name: pbr
+      version: 5.4.4
+
+  - name: Pip Install jmespath
+    pip:
+      name: jmespath
+      version: 0.9.5
+
+  - name: Pip Install ruamel.yaml
+    pip:
+      name: ruamel.yaml
+      version: 0.16.10
+

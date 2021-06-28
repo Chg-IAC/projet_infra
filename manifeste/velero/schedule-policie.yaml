@@ -1,0 +1,12 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: backup-schedule-disaster-recovery
+  namespace: velero
+spec:
+  schedule: '@every 2m'
+  template:
+    includedNamespaces:
+    - kaas
+    ttl: 0h30m00s
+~
