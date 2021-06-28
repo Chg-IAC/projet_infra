@@ -1,0 +1,4 @@
+---
+# Keepalived config
+keepalived_bind_interface: ens34
+keepalived_vip: 10.0.2.60

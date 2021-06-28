@@ -1,0 +1,45 @@
+---
+  - name: Update apt cache
+    apt: update_cache=yes
+
+  - name: Add my user
+    user: >
+      name={{ user_name }} 
+      append=yes 
+      generate_ssh_key=yes 
+      ssh_key_bits=2048 
+      state=present
+
+  - name: Add my workstation user's public key to the new user
+    authorized_key: 
+      user: "{{ user_name }}"
+      key: "{{ lookup('file', 'certificates/id_rsa.pub') }}" 
+      state: present
+#    notify: restart ssh
+
+  - name: Change SSH port
+    lineinfile: 
+      dest: /etc/ssh/sshd_config 
+      regexp: "^Port" 
+      line: "Port 22" 
+      state: present
+#    notify: restart ssh
+
+  - name: Remove root SSH access
+    lineinfile: 
+      dest: /etc/ssh/sshd_config 
+      regexp: "^PermitRootLogin" 
+      line: "PermitRootLogin yes" 
+      state: present
+#    notify: restart ssh
+
+  - name: Remove password SSH access
+    lineinfile: 
+      dest: /etc/ssh/sshd_config 
+      regexp: "^PasswordAuthentication" 
+      line: "PasswordAuthentication yes" 
+      state: present
+
+  - name: restart ssh
+    service: name=ssh state=restarted
+

@@ -1,0 +1,19 @@
+---   
+    - name: "Install HAProxy"
+      apt:
+        name: "keepalived"
+        state: present
+
+    - name: Ensure keepalived conf is set
+      template: 
+        src: "keepalived.conf.j2"
+        dest: "/etc/keepalived/keepalived.conf"
+        backup: yes
+      register: state
+    
+    - name: Ensure keepalived is started
+      systemd:  
+        name: keepalived
+        state: restarted
+        enabled: yes
+      when: state.changed

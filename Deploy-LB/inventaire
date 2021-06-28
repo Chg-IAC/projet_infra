@@ -1,0 +1,43 @@
+[all]
+PARLBC001MP ansible_host=10.0.2.50 keepalived_priority=100  # ip=10.0.2.50
+PARLBC001WP ansible_host=10.0.2.51 keepalived_priority=50 # ip=10.0.2.51
+PARK8S001MP ansible_host=10.0.2.52 # ip=10.0.2.52
+PARK8S002MP ansible_host=10.0.2.53 # ip=10.0.2.53
+PARK8S003MP ansible_host=10.0.2.54 # ip=10.0.2.54
+PARK8S001WP ansible_host=10.0.2.55 # ip=10.0.2.55
+PARK8S002WP ansible_host=10.0.2.56 # ip=10.0.2.56
+PARK8S003WP ansible_host=10.0.2.57 # ip=10.0.2.57
+
+[k8s-nodes]
+PARK8S001MP
+PARK8S002MP
+PARK8S003MP
+PARK8S001WP
+PARK8S002WP
+PARK8S003WP
+
+
+########Pour la partie haproxy.cfg############
+[mastersk8s]
+PARK8S001MP
+PARK8S002MP
+PARK8S003MP 
+
+
+[workersk8s]
+PARK8S001WP
+PARK8S002WP
+PARK8S003WP
+#############################################
+
+[lb-nodes]
+PARLBC001MP
+PARLBC001WP
+
+[active-lb]
+PARLBC001MP
+
+[passive-lb]
+PARLBC001WP
+
+

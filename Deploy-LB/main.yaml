@@ -1,0 +1,16 @@
+---
+#- hosts: 127.0.0.1
+#  connection: local
+#  tasks:
+#  - include: tasks/deploy_lb.yaml
+
+- hosts: Worker_LBC
+  become: yes
+  remote_user: administrator
+  become_user: root
+  vars:
+    user_name: administrator
+  vars_files:
+    - vars/main.yaml
+  tasks:
+    - include: tasks/main.yaml

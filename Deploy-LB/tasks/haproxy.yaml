@@ -1,0 +1,24 @@
+---
+    - name: "Install HAProxy"
+      apt:
+        name: "haproxy"
+        state: present
+
+
+    - name: "Push HAproxy configuration"
+      template:
+        src: "haproxy_conf.j2"
+        dest: "/etc/haproxy/haproxy.cfg"
+        owner: "root"
+        group: "root"
+        mode: 0644
+        backup: yes
+      register: state
+
+    - name: "Restart and enable Haproxy service"
+      systemd:
+        name: "haproxy"
+        state: restarted
+        enabled: yes
+      when: state.changed
+

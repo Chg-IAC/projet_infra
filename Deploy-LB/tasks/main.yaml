@@ -1,0 +1,5 @@
+---
+-  include: bootstrap.yaml
+-  include: haproxy.yaml
+-  include: keepalived.yaml
+
